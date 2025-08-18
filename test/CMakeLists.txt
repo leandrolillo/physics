@@ -8,7 +8,7 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras) #Enable catch2 / ctes
 
 include(Catch)
 
-set(TEST_MAIN "unit_tests")
+set(TEST_MAIN "${LIBRARY_NAME}_unit_tests")
 
 add_executable(${TEST_MAIN} tests.cpp)
 target_include_directories(${TEST_MAIN} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

@@ -8,7 +8,7 @@
 #ifndef SRC_PHYSICS_PARTICLE_CONTACT_H_
 #define SRC_PHYSICS_PARTICLE_CONTACT_H_
 
-#include "../collisionDetection/BaseContact.h"
+#include "../../../geometry/src/collisionDetection/BaseContact.h"
 #include "physics/Particle.h"
 
 class ParticleContact : public BaseContact {

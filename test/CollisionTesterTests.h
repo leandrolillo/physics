@@ -12,7 +12,7 @@
 #include <Geometry.h>
 #include <vector>
 
-#include "../src/collisionDetection/CollisionTester.h"
+#include "../../geometry/src/collisionDetection/CollisionTester.h"
 #include "../src/collisionDetection/GeometryContact.h"
 
 class CollisionTesterTests : public UnitTest {

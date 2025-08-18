@@ -10,8 +10,9 @@
 
 #include <Tests.h>
 #include <Geometry.h>
-#include <GeometryContact.h>
 #include <vector>
+
+#include "../../geometry/src/collisionDetection/GeometryContact.h"
 #include "../intersection/CollisionTester.h"
 
 class CollisionDetectorTests : public UnitTest {

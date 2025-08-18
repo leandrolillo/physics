@@ -10,10 +10,10 @@
 
 #include <Tests.h>
 #include <Geometry.h>
-#include <GeometryContact.h>
 #include <vector>
 #include "../intersection/CollisionTester.h"
 #include<StringFormatter.h>
+#include "../../geometry/src/collisionDetection/GeometryContact.h"
 
 class ContactResolverTests : public UnitTest {
 public:

@@ -11,7 +11,8 @@
 #include<Math3d.h>
 #include<vector>
 #include <algorithm>
-#include "collisionDetection/CollisionDetector.h"
+
+#include "CollisionDetector.h"
 #include "physics/ContactResolver.h"
 #include "physics/Force.h"
 #include "physics/Particle.h"
