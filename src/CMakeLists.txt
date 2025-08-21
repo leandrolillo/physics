@@ -1,4 +1,4 @@
-add_library(physics INTERFACE)
+add_library(${LIBRARY_NAME} INTERFACE)
 
 FetchContent_Declare(
     math
@@ -14,7 +14,8 @@ FetchContent_Declare(
     GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(geometry)
 
-target_include_directories(physics INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/collisionDetection ${CMAKE_CURRENT_SOURCE_DIR}/geometry ${CMAKE_CURRENT_SOURCE_DIR}/forces)
+add_subdirectory(physics)
+add_subdirectory(forces)
 
 # library link dependencies
-target_link_libraries(physics INTERFACE math geometry)
+target_link_libraries(${LIBRARY_NAME} INTERFACE math geometry)
