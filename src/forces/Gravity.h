@@ -8,7 +8,7 @@
 #ifndef SRC_PHYSICS_FORCES_GRAVITY_H_
 #define SRC_PHYSICS_FORCES_GRAVITY_H_
 
-#include "../physics/Force.h"
+#include "Force.h"
 
 class Gravity : public Force {
 	vector acceleration;

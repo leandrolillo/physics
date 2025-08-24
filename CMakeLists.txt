@@ -6,11 +6,11 @@ set(CMAKE_CXX_EXTENSIONS        OFF)
 
 include(FetchContent) #Enable FetchContent for cmake git dependencies
 
-# the juice
+# project
 set(LIBRARY_NAME physics)
 project(${LIBRARY_NAME} VERSION 1.0.0 LANGUAGES C CXX)
 
-#source code
+#sources
 add_subdirectory(src)
 
 #test

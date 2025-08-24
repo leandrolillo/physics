@@ -11,11 +11,11 @@
 constexpr real sphere_radius=0.1;
 
 #include<vector>
-#include"../physics/ParticleContact.h"
-#include"../physics/Particle.h"
+#include"ParticleContact.h"
+#include"Particle.h"
 
 #include <Geometry.h>
-#include "../../../geometry/src/collisionDetection/CollisionTester.h"
+#include "CollisionTester.h"
 
 
 class CollisionDetector {

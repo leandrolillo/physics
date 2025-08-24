@@ -7,7 +7,6 @@ add_library(${LIBRARY_NAME} INTERFACE)
 #    GIT_SHALLOW TRUE)
 #FetchContent_MakeAvailable(math)
 
-#Does this include math as well?
 FetchContent_Declare(
     geometry
     GIT_REPOSITORY https://github.com/leandrolillo/geometry.git
@@ -20,4 +19,3 @@ add_subdirectory(forces)
 
 # library link dependencies
 target_link_libraries(${LIBRARY_NAME} INTERFACE geometry)
-#target_link_libraries(${LIBRARY_NAME} INTERFACE math geometry)
