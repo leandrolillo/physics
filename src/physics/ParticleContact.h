@@ -9,7 +9,7 @@
 #define SRC_PHYSICS_PARTICLE_CONTACT_H_
 
 #include "BaseContact.h"
-#include "physics/Particle.h"
+#include "Particle.h"
 
 class ParticleContact : public BaseContact {
 public:

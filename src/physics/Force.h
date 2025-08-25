@@ -9,7 +9,7 @@
 #define SRC_PHYSICS_FORCE_H_
 
 #include<vector>
-#include "physics/Particle.h"
+#include "Particle.h"
 
 
 class Force {

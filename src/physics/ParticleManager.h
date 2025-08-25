@@ -13,14 +13,13 @@
 #include <algorithm>
 
 #include "CollisionDetector.h"
-#include "physics/ContactResolver.h"
-#include "physics/Force.h"
-#include "physics/Particle.h"
-#include "physics/ParticleIntegrator.h"
+#include "ContactResolver.h"
+#include "Force.h"
+#include "Particle.h"
+#include "ParticleIntegrator.h"
 
 
 class ParticleManager {
-    Logger *logger = LoggerFactory::getLogger("ParticleManager");
 	std::vector<Particle *> particles;
 	std::vector<Force *> forces;
 	ParticleIntegrator particleIntegrator;
@@ -98,7 +97,6 @@ public:
 protected:
 
 	void integrate(real dt) const {
-	    logger->verbose("Begin integrating");
 		for(std::vector<Particle *>::const_iterator iterator = particles.begin(); iterator != particles.end(); iterator++) {
 			Particle *particle = *iterator;
 			if(particle != null && particle->getStatus()) {
@@ -106,7 +104,6 @@ protected:
 				particle->afterIntegrate(dt);
 			}
 		}
-		logger->verbose("Done integrating");
 	}
 
 	void applyForces(real dt) const {

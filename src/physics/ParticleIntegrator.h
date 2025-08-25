@@ -10,7 +10,7 @@
 
 #include<Math3d.h>
 #include<vector>
-#include "physics/Particle.h"
+#include "Particle.h"
 
 class ParticleIntegrator {
 public:

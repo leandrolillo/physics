@@ -9,10 +9,9 @@
 #define SRC_PHYSICS_CONTACTRESOLVER_H_
 
 #include <vector>
-#include "physics/ParticleContact.h"
+#include "ParticleContact.h"
 
 class ContactResolver {
-    Logger *logger = LoggerFactory::getLogger("ContactResolver");
 
 protected:
     real calculateSeparatingVelocity(const ParticleContact &contact) const {
