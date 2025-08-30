@@ -5,9 +5,7 @@
  *      Author: leandro
  */
 
-#ifndef SRC_PHYSICS_FORCE_H_
-#define SRC_PHYSICS_FORCE_H_
-
+#pragma once
 #include<vector>
 #include "Particle.h"
 
@@ -17,6 +15,3 @@ public:
 	virtual void apply(real dt, const std::vector<Particle *> &particles) const = 0;
 	virtual ~Force() {}
  };
-
-
-#endif /* SRC_PHYSICS_FORCE_H_ */
