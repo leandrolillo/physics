@@ -1,9 +1,4 @@
-/*
- * ParticleManager.h
- *
- *  Created on: Mar 20, 2021
- *      Author: leandro
- */
+#pragma once
 
 #include<Math3d.h>
 #include<vector>
