@@ -10,7 +10,7 @@ include(Catch)
 
 set(TESTS "${LIBRARY_NAME}_unit_tests")
 
-add_executable(${TESTS} tests.cpp)
+add_executable(${TESTS} ParticleManagerTest.cpp ContactResolverTest.cpp CollisionDetectorTest.cpp)
 target_include_directories(${TESTS} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${TESTS} PUBLIC ${LIBRARY_NAME} Catch2::Catch2WithMain)
 
