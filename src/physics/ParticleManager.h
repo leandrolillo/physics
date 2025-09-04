@@ -35,8 +35,10 @@ public:
     return *this->forces.back();
   }
 
-  void addScenery(std::unique_ptr<Geometry> scenery) {
+  Geometry &addScenery(std::unique_ptr<Geometry> scenery) {
     this->collisionDetector.addScenery(std::move(scenery));
+
+    return *this->collisionDetector.getScenery().back();
   }
 
   const std::vector<std::unique_ptr<Geometry>>& getScenery() const {
