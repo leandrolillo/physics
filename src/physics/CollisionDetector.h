@@ -98,6 +98,9 @@ public:
             }
           }
 
+          /**
+           * Check last particle vs scenery since this one was skipped from the loops before
+           */
           auto &particleA = particles.back();
           if(particleA && particleA->getStatus()) {
             for(auto &sceneryIterator : this->scenery)  {
