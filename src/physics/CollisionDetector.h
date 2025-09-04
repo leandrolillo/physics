@@ -48,8 +48,64 @@ public:
   virtual std::vector<ParticleContact>detectCollisions(const std::vector<Particle *> &particles) const {
         std::vector<ParticleContact> contacts;
 
-        for(std::vector<Particle *>::const_iterator iteratorA = particles.begin(); iteratorA != particles.end(); iteratorA++) {
-          Particle *particleA = *iteratorA;
+        if(particles.size() > 0) {
+          /**
+           * Iterate without repeating:
+           * for i = 0 : n-1
+           *  for j = i+1 : n
+           *
+           *  Note this misses comparing the last element against scenery, thus we have to do it outside of the loop
+           */
+          for(std::vector<Particle *>::const_iterator iteratorA = particles.begin(); iteratorA != particles.end() - 1; iteratorA++) {
+            Particle *particleA = *iteratorA;
+            if(particleA && particleA->getStatus() && particleA->getBoundingVolume()) {
+              for(auto sceneryIterator : this->scenery)  {
+                if(sceneryIterator) {
+                  std::vector<GeometryContact> pairContacts = intersectionTester->detectCollision(*(particleA->getBoundingVolume()), *sceneryIterator);
+                  if(!pairContacts.empty()) {
+                    std::transform(pairContacts.begin(), pairContacts.end(), std::back_inserter(contacts),
+                            [&particleA](GeometryContact pairContact) -> ParticleContact {
+                            return ParticleContact(particleA,
+                                    null,
+                                    pairContact.getIntersection(),
+                                    pairContact.getNormal(),
+                                    pairContact.getRestitution(),
+                                    pairContact.getPenetration());
+                    });
+
+                    particleA->onCollision(contacts.back());
+                  }
+                }
+              }
+
+              for(std::vector<Particle *>::const_iterator iteratorB = iteratorA+1; iteratorB != particles.end(); iteratorB++) {
+                Particle *particleB = *iteratorB;
+                if(particleB && particleB->getStatus() && particleB->getBoundingVolume()) {
+                  std::vector<GeometryContact> pairContacts = intersectionTester->detectCollision(*particleA->getBoundingVolume(), *particleB->getBoundingVolume());
+                  if(!pairContacts.empty()) {
+                    std::transform(pairContacts.begin(), pairContacts.end(), std::back_inserter(contacts),
+                            [&particleA, &particleB](GeometryContact pairContact) -> ParticleContact {
+                            return ParticleContact(particleA,
+                                    particleB,
+                                    pairContact.getIntersection(),
+                                    pairContact.getNormal(),
+                                    pairContact.getRestitution(),
+                                    pairContact.getPenetration());
+                    });
+
+                    particleA->onCollision(contacts.back());
+                    particleB->onCollision(contacts.back());
+                  }
+                }
+              }
+            }
+          }
+
+
+          /**
+           * Check last particle vs scenery since this one was skipped from the loops before
+           */
+          Particle *particleA = particles.back();
           if(particleA && particleA->getStatus() && particleA->getBoundingVolume()) {
             for(auto sceneryIterator : this->scenery)  {
               if(sceneryIterator) {
@@ -66,27 +122,6 @@ public:
                   });
 
                   particleA->onCollision(contacts.back());
-                }
-              }
-            }
-
-            for(std::vector<Particle *>::const_iterator iteratorB = iteratorA+1; iteratorB != particles.end(); iteratorB++) {
-              Particle *particleB = *iteratorB;
-              if(particleB && particleB->getStatus() && particleB->getBoundingVolume()) {
-                std::vector<GeometryContact> pairContacts = intersectionTester->detectCollision(*particleA->getBoundingVolume(), *particleB->getBoundingVolume());
-                if(!pairContacts.empty()) {
-                  std::transform(pairContacts.begin(), pairContacts.end(), std::back_inserter(contacts),
-                          [&particleA, &particleB](GeometryContact pairContact) -> ParticleContact {
-                          return ParticleContact(particleA,
-                                  particleB,
-                                  pairContact.getIntersection(),
-                                  pairContact.getNormal(),
-                                  pairContact.getRestitution(),
-                                  pairContact.getPenetration());
-                  });
-
-                  particleA->onCollision(contacts.back());
-                  particleB->onCollision(contacts.back());
                 }
               }
             }
