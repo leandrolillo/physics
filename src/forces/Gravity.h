@@ -16,8 +16,8 @@ public:
     this->acceleration = acceleration;
   }
 
-  void apply(real dt, const std::vector<Particle*> &particles) const override {
-    for (auto particle : particles) {
+  void apply(real dt, const std::vector<std::unique_ptr<Particle>> &particles) const override {
+    for (auto &particle : particles) {
       if (particle->getStatus()) {
         vector force = this->acceleration * particle->getMass();
         particle->applyForce(force);

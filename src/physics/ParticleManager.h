@@ -11,50 +11,50 @@
 #include "ParticleIntegrator.h"
 
 class ParticleManager {
-  std::vector<Particle*> particles;
-  std::vector<Force*> forces;
+  std::vector<std::unique_ptr<Particle>> particles;
+  std::vector<std::unique_ptr<Force>> forces;
   ParticleIntegrator particleIntegrator;
   ContactResolver contactResolver;
   CollisionDetector collisionDetector;
   std::vector<ParticleContact> contacts;
 
 public:
-  void addParticle(Particle *particle) {
-    this->particles.push_back(particle);
+  Particle &addParticle(std::unique_ptr<Particle> particle) {
+    this->particles.push_back(std::move(particle));
+
+    return *this->particles.back();
   }
 
-  const std::vector<Particle*>& getParticles() const {
+  const std::vector<std::unique_ptr<Particle>>& getParticles() const {
     return this->particles;
   }
 
-  void addForce(Force *force) {
-    this->forces.push_back(force);
+  Force &addForce(std::unique_ptr<Force> force) {
+    this->forces.push_back(std::move(force));
+
+    return *this->forces.back();
   }
 
-  void addScenery(const Geometry *scenery) {
-    this->collisionDetector.addScenery(scenery);
+  void addScenery(std::unique_ptr<Geometry> scenery) {
+    this->collisionDetector.addScenery(std::move(scenery));
   }
 
-  const std::vector<const Geometry*>& getScenery() const {
+  const std::vector<std::unique_ptr<Geometry>>& getScenery() const {
     return this->collisionDetector.getScenery();
   }
 
-  void removeParticle(const Particle *particle) {
-    //this->particles.erase(__position)
-    particles.erase(std::remove(particles.begin(), particles.end(), particle), particles.end());
-  }
+//  void removeParticle(const Particle *particle) {
+//    //this->particles.erase(__position)
+//    particles.erase(std::remove(particles.begin(), particles.end(), particle), particles.end());
+//  }
 
   CollisionDetector& getCollisionDetector() {
     return this->collisionDetector;
   }
 
-  void setIntersectionTester(CollisionTester *intersectionTester) {
-    this->collisionDetector.setIntersectionTester(intersectionTester);
-  }
-
   void clearAccumulators() const {
-    for (std::vector<Particle*>::const_iterator iterator = particles.begin(); iterator != particles.end(); iterator++) {
-      (*iterator)->clearForceAccumulator();
+    for (auto &particle : particles) {
+      particle->clearForceAccumulator();
     }
   }
 
@@ -85,18 +85,17 @@ public:
 
 protected:
   void integrate(real dt) const {
-    for (std::vector<Particle*>::const_iterator iterator = particles.begin(); iterator != particles.end(); iterator++) {
-      Particle *particle = *iterator;
-      if (particle != null && particle->getStatus()) {
-        particleIntegrator.integrate(dt, *particle);
+    for (auto &particle : particles) {
+      if (particle->getStatus()) {
+        particleIntegrator.integrate(dt, *particle.get());
         particle->afterIntegrate(dt);
       }
     }
   }
 
   void applyForces(real dt) const {
-    for (std::vector<Force*>::const_iterator iterator = forces.begin(); iterator != forces.end(); iterator++) {
-      (*iterator)->apply(dt, particles);
+    for (auto &force : forces) {
+      force->apply(dt, particles);
     }
   }
 };

@@ -12,6 +12,6 @@
 
 class Force {
 public:
-	virtual void apply(real dt, const std::vector<Particle *> &particles) const = 0;
+	virtual void apply(real dt, const std::vector<std::unique_ptr<Particle>> &particles) const = 0;
 	virtual ~Force() {}
  };
