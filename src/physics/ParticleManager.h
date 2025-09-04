@@ -20,6 +20,9 @@ class ParticleManager {
 
 public:
   Particle &addParticle(std::unique_ptr<Particle> particle) {
+    if(!particle) {
+      throw std::invalid_argument(String(__FILE__) + ":" + std::to_string(__LINE__) + ": Particle can not be null");
+    }
     this->particles.push_back(std::move(particle));
 
     return *this->particles.back();
@@ -30,12 +33,20 @@ public:
   }
 
   Force &addForce(std::unique_ptr<Force> force) {
+    if(!force) {
+      throw std::invalid_argument(String(__FILE__) + ":" + std::to_string(__LINE__) + ": Particle can not be null");
+    }
+
     this->forces.push_back(std::move(force));
 
     return *this->forces.back();
   }
 
   Geometry &addScenery(std::unique_ptr<Geometry> scenery) {
+    if(!scenery) {
+      throw std::invalid_argument(String(__FILE__) + ":" + std::to_string(__LINE__) + ": Particle can not be null");
+    }
+
     this->collisionDetector.addScenery(std::move(scenery));
 
     return *this->collisionDetector.getScenery().back();
@@ -54,7 +65,16 @@ public:
     for(auto &particle : this->particles) {
       particle->setStatus(false);
     }
+  }
 
+  Particle *nextAvailableParticle() {
+    for(auto &particle : this->particles) {
+      if(!particle->getStatus()) {
+        return particle.get();
+      }
+    }
+
+    return null;
   }
 
   CollisionDetector& getCollisionDetector() {
