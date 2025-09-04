@@ -48,6 +48,13 @@ public:
 //    particles.erase(std::remove(particles.begin(), particles.end(), particle), particles.end());
 //  }
 
+  void disableParticles() {
+    for(auto &particle : this->particles) {
+      particle->setStatus(false);
+    }
+
+  }
+
   CollisionDetector& getCollisionDetector() {
     return this->collisionDetector;
   }
