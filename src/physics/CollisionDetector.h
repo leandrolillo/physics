@@ -17,35 +17,32 @@ constexpr real sphere_radius=0.1;
 
 
 class CollisionDetector {
-    std::vector <const Geometry *>scenery;
-    std::unique_ptr<CollisionTester> intersectionTester;
+    std::vector <std::unique_ptr<Geometry>>scenery;
+    CollisionTester intersectionTester;
 public:
   CollisionDetector() {
-    this->intersectionTester = std::unique_ptr < CollisionTester
-        > (new CollisionTester());
   }
   virtual ~CollisionDetector() {
   }
 
-  void setIntersectionTester(CollisionTester *intersectionTester) {
-    this->intersectionTester.reset(intersectionTester);
+  const CollisionTester &getIntersectionTester() const {
+    return this->intersectionTester;
   }
 
-  const CollisionTester* getIntersectionTester() const {
-    return this->intersectionTester.get();
-  }
-
-  void addScenery(const Geometry *scenery) {
-    if (scenery) {
-      this->scenery.push_back(scenery);
+  Geometry &addScenery(std::unique_ptr<Geometry> scenery) {
+    if(scenery) {
+      this->scenery.push_back(std::move(scenery));
+      return *this->scenery.back();
+    } else {
+      throw std::invalid_argument("Scenery can not be null");
     }
   }
 
-  const std::vector<const Geometry*>& getScenery() const {
+  const std::vector<std::unique_ptr<Geometry>> &getScenery() const {
     return this->scenery;
   }
 
-  virtual std::vector<ParticleContact>detectCollisions(const std::vector<Particle *> &particles) const {
+  virtual std::vector<ParticleContact>detectCollisions(const std::vector<std::unique_ptr<Particle>> &particles) const {
         std::vector<ParticleContact> contacts;
 
         if(particles.size() > 0) {
@@ -56,16 +53,16 @@ public:
            *
            *  Note this misses comparing the last element against scenery, thus we have to do it outside of the loop
            */
-          for(std::vector<Particle *>::const_iterator iteratorA = particles.begin(); iteratorA != particles.end() - 1; iteratorA++) {
-            Particle *particleA = *iteratorA;
-            if(particleA && particleA->getStatus() && particleA->getBoundingVolume()) {
-              for(auto sceneryIterator : this->scenery)  {
+          for(auto iteratorA = particles.begin(); iteratorA != particles.end() - 1; iteratorA++) {
+            auto &particleA = *iteratorA;
+            if(particleA && particleA->getStatus()) {
+              for(auto &sceneryIterator : this->scenery)  {
                 if(sceneryIterator) {
-                  std::vector<GeometryContact> pairContacts = intersectionTester->detectCollision(*(particleA->getBoundingVolume()), *sceneryIterator);
+                  std::vector<GeometryContact> pairContacts = intersectionTester.detectCollision(particleA->getBoundingVolume(), *sceneryIterator);
                   if(!pairContacts.empty()) {
                     std::transform(pairContacts.begin(), pairContacts.end(), std::back_inserter(contacts),
                             [&particleA](GeometryContact pairContact) -> ParticleContact {
-                            return ParticleContact(particleA,
+                            return ParticleContact(particleA.get(),
                                     null,
                                     pairContact.getIntersection(),
                                     pairContact.getNormal(),
@@ -78,15 +75,15 @@ public:
                 }
               }
 
-              for(std::vector<Particle *>::const_iterator iteratorB = iteratorA+1; iteratorB != particles.end(); iteratorB++) {
-                Particle *particleB = *iteratorB;
-                if(particleB && particleB->getStatus() && particleB->getBoundingVolume()) {
-                  std::vector<GeometryContact> pairContacts = intersectionTester->detectCollision(*particleA->getBoundingVolume(), *particleB->getBoundingVolume());
+              for(auto iteratorB = iteratorA+1; iteratorB != particles.end(); iteratorB++) {
+                auto &particleB = *iteratorB;
+                if(particleB && particleB->getStatus()) {
+                  std::vector<GeometryContact> pairContacts = intersectionTester.detectCollision(particleA->getBoundingVolume(), particleB->getBoundingVolume());
                   if(!pairContacts.empty()) {
                     std::transform(pairContacts.begin(), pairContacts.end(), std::back_inserter(contacts),
                             [&particleA, &particleB](GeometryContact pairContact) -> ParticleContact {
-                            return ParticleContact(particleA,
-                                    particleB,
+                            return ParticleContact(particleA.get(),
+                                    particleB.get(),
                                     pairContact.getIntersection(),
                                     pairContact.getNormal(),
                                     pairContact.getRestitution(),
@@ -101,19 +98,18 @@ public:
             }
           }
 
-
           /**
            * Check last particle vs scenery since this one was skipped from the loops before
            */
-          Particle *particleA = particles.back();
-          if(particleA && particleA->getStatus() && particleA->getBoundingVolume()) {
-            for(auto sceneryIterator : this->scenery)  {
+          auto &particleA = particles.back();
+          if(particleA && particleA->getStatus()) {
+            for(auto &sceneryIterator : this->scenery)  {
               if(sceneryIterator) {
-                std::vector<GeometryContact> pairContacts = intersectionTester->detectCollision(*(particleA->getBoundingVolume()), *sceneryIterator);
+                std::vector<GeometryContact> pairContacts = intersectionTester.detectCollision(particleA->getBoundingVolume(), *sceneryIterator);
                 if(!pairContacts.empty()) {
                   std::transform(pairContacts.begin(), pairContacts.end(), std::back_inserter(contacts),
                           [&particleA](GeometryContact pairContact) -> ParticleContact {
-                          return ParticleContact(particleA,
+                          return ParticleContact(particleA.get(),
                                   null,
                                   pairContact.getIntersection(),
                                   pairContact.getNormal(),

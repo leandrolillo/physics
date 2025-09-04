@@ -35,24 +35,19 @@ protected:
 
 public:
   Particle(std::unique_ptr<Geometry> geometry) {
-    this->boundingVolume = std::move(geometry);
-  }
-
-  Particle(Geometry *geometry) {
-    this->boundingVolume = std::unique_ptr < Geometry > (geometry);
-  }
-
-  Particle(Particle &&another) {
-    this->boundingVolume = std::move(boundingVolume);
-    another.boundingVolume = nullptr;
+    if(geometry) {
+      this->boundingVolume = std::move(geometry);
+    } else {
+      throw std::invalid_argument("geometry can not be null");
+    }
   }
 
   virtual ~Particle() {
 
   }
 
-  virtual const Geometry* getBoundingVolume() const {
-    return this->boundingVolume.get();
+  virtual const Geometry &getBoundingVolume() const {
+    return *this->boundingVolume.get();
   }
 
   virtual void afterIntegrate(real dt) {

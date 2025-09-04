@@ -10,7 +10,7 @@ add_library(${LIBRARY_NAME} INTERFACE)
 FetchContent_Declare(
     geometry
     GIT_REPOSITORY https://github.com/leandrolillo/geometry.git
-    GIT_TAG master
+    GIT_TAG ${GEOMETRY_VERSION}
     GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(geometry)
 
