@@ -42,15 +42,6 @@ public:
     }
   }
 
-//  Particle(Geometry *geometry) {
-//    this->boundingVolume = std::unique_ptr < Geometry > (geometry);
-//  }
-//
-//  Particle(Particle &&another) {
-//    this->boundingVolume = std::move(boundingVolume);
-//    another.boundingVolume = nullptr;
-//  }
-
   virtual ~Particle() {
 
   }
