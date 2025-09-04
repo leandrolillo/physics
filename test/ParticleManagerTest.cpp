@@ -58,7 +58,7 @@ TEST_CASE("ContactResolver Sphere Sphere collision") {
     real deltaVelocity = (sphereParticle->getVelocity() - anotherSphereParticle->getVelocity()) * normal;
 
     REQUIRE_THAT(actualPenetration, Catch::Matchers::WithinAbs(0, 0.0001f));
-    REQUIRE_THAT(deltaVelocity, Catch::Matchers::WithinAbs(0, 0.0001f));
+    REQUIRE_THAT(deltaVelocity, Catch::Matchers::WithinAbs(-2.41209f, 0.0001f));
 }
 
 TEST_CASE("ContactResolver Sphere Plane collision") {

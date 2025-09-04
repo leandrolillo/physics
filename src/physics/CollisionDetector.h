@@ -34,7 +34,7 @@ public:
       this->scenery.push_back(std::move(scenery));
       return *this->scenery.back();
     } else {
-      return *scenery;
+      throw std::invalid_argument("Scenery can not be null");
     }
   }
 

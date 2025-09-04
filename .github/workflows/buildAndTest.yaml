@@ -1,4 +1,4 @@
-name: MacOS CI Test
+name: Build and Test
 
 on:
   push:
@@ -13,4 +13,4 @@ jobs:
     - uses: actions/checkout@v2
     - name: building and testing
       run: |
-        ./cmakew -d -t .
+        ./cmakew -t .
