@@ -26,10 +26,10 @@ protected:
   bool _status = true;
 
   /**
-   * rough approximation of drag to avoid numerical stability issues - without this objects are likely to accelerate magically.
-   *
+   * damping [0, 1]: Rough approximation of drag to avoid numerical stability issues - without this objects are likely to accelerate magically.
+   * 1 means no drag, 0 means all velocity is lost immediately - something limiting 1 seems reasonable.
    */
-  real damping = 0.0f;
+  real damping;
 
   vector forceAccumulator;
 
@@ -40,6 +40,8 @@ public:
     } else {
       throw std::invalid_argument("geometry can not be null");
     }
+
+    setDamping(1.0);
   }
 
   virtual ~Particle() {
@@ -121,7 +123,7 @@ public:
   }
 
   void setDamping(real damping) {
-    this->damping = damping;
+    this->damping = std::max((real)0.0, std::min((real)1.0, damping));
   }
 
   void clearForceAccumulator() {
