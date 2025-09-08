@@ -17,8 +17,8 @@ class Particle {
 
 protected:
   std::unique_ptr<Geometry> boundingVolume;
-  vector velocity;
-  vector acceleration;
+  vector velocity = {0, 0, 0};
+  vector acceleration = {0, 0, 0};
 
   real inverseMass = 0.0f;
   real mass = 0.0f;
