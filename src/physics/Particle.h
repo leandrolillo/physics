@@ -42,7 +42,7 @@ public:
     }
 
     /*Set default values that make the particle "active", otherwise it is confussing when nothing happens*/
-    setDamping(1.0);
+    setDamping(nextafter(1, 0));
     setMass(1.0);
   }
 
