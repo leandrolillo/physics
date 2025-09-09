@@ -108,8 +108,9 @@ public:
      * generate contacts (collision and contact generators)
      */
     contacts = collisionDetector.detectCollisions(this->particles);
-    contactResolver.resolve(contacts, dt);
-
+    if(contacts.size() > 0) {
+      contactResolver.resolve(contacts, dt);
+    }
   }
 
 protected:

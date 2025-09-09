@@ -17,8 +17,8 @@ class Particle {
 
 protected:
   std::unique_ptr<Geometry> boundingVolume;
-  vector velocity;
-  vector acceleration;
+  vector velocity = {0, 0, 0};
+  vector acceleration = {0, 0, 0};
 
   real inverseMass = 0.0f;
   real mass = 0.0f;
@@ -26,12 +26,12 @@ protected:
   bool _status = true;
 
   /**
-   * rough approximation of drag to avoid numerical stability issues - without this objects are likely to accelerate magically.
-   *
+   * damping [0, 1]: Rough approximation of drag to avoid numerical stability issues - without this objects are likely to accelerate magically.
+   * 1 means no drag, 0 means all velocity is lost immediately - something limiting 1 seems reasonable.
    */
-  real damping = 0.0f;
+  real damping;
 
-  vector forceAccumulator;
+  vector forceAccumulator {0, 0, 0};
 
 public:
   Particle(std::unique_ptr<Geometry> geometry) {
@@ -40,6 +40,10 @@ public:
     } else {
       throw std::invalid_argument("geometry can not be null");
     }
+
+    /*Set default values that make the particle "active", otherwise it is confussing when nothing happens*/
+    setDamping(nextafter(1, 0));
+    setMass(1.0);
   }
 
   virtual ~Particle() {
@@ -64,35 +68,39 @@ public:
     return this->_status;
   }
 
-  void setStatus(bool active) {
+  Particle &setStatus(bool active) {
     this->_status = active;
+    return *this;
   }
 
-  void setPosition(const vector &position) {
+  Particle &setPosition(const vector &position) {
     this->boundingVolume->setOrigin(position);
+    return *this;
   }
 
   const vector& getPosition() const {
     return this->boundingVolume->getOrigin();
   }
 
-  void setVelocity(const vector &velocity) {
+  Particle &setVelocity(const vector &velocity) {
     this->velocity = velocity;
+    return *this;
   }
 
   const vector& getVelocity() const {
     return this->velocity;
   }
 
-  void setAcceleration(const vector &acceleration) {
+  Particle &setAcceleration(const vector &acceleration) {
     this->acceleration = acceleration;
+    return *this;
   }
 
   const vector& getAcceleration() const {
     return this->acceleration;
   }
 
-  void setMass(real mass) {
+  Particle &setMass(real mass) {
     if (mass == 0.0f) {
       this->inverseMass = (real) 0.0;
     } else {
@@ -100,9 +108,10 @@ public:
     }
 
     this->mass = mass;
+    return *this;
   }
 
-  void setInverseMass(real inverseMass) {
+  Particle &setInverseMass(real inverseMass) {
     if (inverseMass == 0.0f) {
       this->mass = (real) 0.0;
     } else {
@@ -110,6 +119,7 @@ public:
     }
 
     this->inverseMass = inverseMass;
+    return *this;
   }
 
   const real getMass() const {
@@ -120,15 +130,18 @@ public:
     return this->inverseMass;
   }
 
-  void setDamping(real damping) {
-    this->damping = damping;
+  Particle &setDamping(real damping) {
+    this->damping = std::max((real)0.0, std::min((real)1.0, damping));
+    return *this;
   }
 
-  void clearForceAccumulator() {
+  Particle & clearForceAccumulator() {
     this->forceAccumulator = vector(0, 0, 0);
+    return *this;
   }
 
-  void applyForce(vector force) {
+  Particle & applyForce(vector force) {
     this->forceAccumulator += force;
+    return *this;
   }
 };
