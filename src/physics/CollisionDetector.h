@@ -62,12 +62,21 @@ public:
                   if(!pairContacts.empty()) {
                     std::transform(pairContacts.begin(), pairContacts.end(), std::back_inserter(contacts),
                             [&particleA](GeometryContact pairContact) -> ParticleContact {
-                            return ParticleContact(particleA.get(),
+                            if(pairContact.getGeometryA() == &particleA->getBoundingVolume()) {
+                              return ParticleContact(particleA.get(),
                                     null,
                                     pairContact.getIntersection(),
                                     pairContact.getNormal(),
                                     pairContact.getRestitution(),
                                     pairContact.getPenetration());
+                            } else {
+                              return ParticleContact(null,
+                                    particleA.get(),
+                                    pairContact.getIntersection(),
+                                    pairContact.getNormal(),
+                                    pairContact.getRestitution(),
+                                    pairContact.getPenetration());
+                            }
                     });
 
                     particleA->onCollision(contacts.back());
@@ -82,12 +91,21 @@ public:
                   if(!pairContacts.empty()) {
                     std::transform(pairContacts.begin(), pairContacts.end(), std::back_inserter(contacts),
                             [&particleA, &particleB](GeometryContact pairContact) -> ParticleContact {
-                            return ParticleContact(particleA.get(),
-                                    particleB.get(),
-                                    pairContact.getIntersection(),
-                                    pairContact.getNormal(),
-                                    pairContact.getRestitution(),
-                                    pairContact.getPenetration());
+                              if(pairContact.getGeometryA() == &particleA->getBoundingVolume()) {
+                                return ParticleContact(particleA.get(),
+                                        particleB.get(),
+                                        pairContact.getIntersection(),
+                                        pairContact.getNormal(),
+                                        pairContact.getRestitution(),
+                                        pairContact.getPenetration());
+                              } else {
+                                return ParticleContact(particleB.get(),
+                                        particleA.get(),
+                                        pairContact.getIntersection(),
+                                        pairContact.getNormal(),
+                                        pairContact.getRestitution(),
+                                        pairContact.getPenetration());
+                              }
                     });
 
                     particleA->onCollision(contacts.back());
