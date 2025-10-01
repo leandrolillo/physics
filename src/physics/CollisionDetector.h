@@ -57,7 +57,7 @@ public:
             auto &particleA = *iteratorA;
             if(particleA && particleA->getStatus()) {
               for(auto &sceneryIterator : this->scenery)  {
-                if(sceneryIterator) {
+                if(sceneryIterator && sceneryIterator->getStatus()) {
                   std::vector<GeometryContact> pairContacts = intersectionTester.detectCollision(particleA->getBoundingVolume(), *sceneryIterator);
                   if(!pairContacts.empty()) {
                     std::transform(pairContacts.begin(), pairContacts.end(), std::back_inserter(contacts),
@@ -122,7 +122,7 @@ public:
           auto &particleA = particles.back();
           if(particleA && particleA->getStatus()) {
             for(auto &sceneryIterator : this->scenery)  {
-              if(sceneryIterator) {
+              if(sceneryIterator && sceneryIterator->getStatus()) {
                 std::vector<GeometryContact> pairContacts = intersectionTester.detectCollision(particleA->getBoundingVolume(), *sceneryIterator);
                 if(!pairContacts.empty()) {
                   std::transform(pairContacts.begin(), pairContacts.end(), std::back_inserter(contacts),

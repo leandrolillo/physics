@@ -23,8 +23,6 @@ protected:
   real inverseMass = 0.0f;
   real mass = 0.0f;
 
-  bool _status = true;
-
   /**
    * damping [0, 1]: Rough approximation of drag to avoid numerical stability issues - without this objects are likely to accelerate magically.
    * 1 means no drag, 0 means all velocity is lost immediately - something limiting 1 seems reasonable.
@@ -65,11 +63,11 @@ public:
   }
 
   bool getStatus() const {
-    return this->_status;
+    return this->boundingVolume->getStatus();
   }
 
-  Particle &setStatus(bool active) {
-    this->_status = active;
+  Particle &setStatus(bool status) {
+    this->boundingVolume->setStatus(status);
     return *this;
   }
 
