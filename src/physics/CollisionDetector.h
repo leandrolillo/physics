@@ -80,6 +80,7 @@ public:
                     });
 
                     particleA->onCollision(contacts.back());
+                    sceneryIterator->onCollision((GeometryContact &)contacts.back());
                   }
                 }
               }
@@ -136,6 +137,7 @@ public:
                   });
 
                   particleA->onCollision(contacts.back());
+                  sceneryIterator->onCollision((GeometryContact &)contacts.back());
                 }
               }
             }
