@@ -15,11 +15,11 @@ constexpr real sphere_radius=0.1;
 #include <Geometry.h>
 #include "CollisionTester.h"
 
-constexpr real restitution = 0.95;
-
 class CollisionDetector {
     std::vector <std::unique_ptr<Geometry>>scenery;
     CollisionTester intersectionTester;
+
+    real restitution = 0.95;
 public:
   CollisionDetector() {
   }
@@ -30,6 +30,11 @@ public:
     return this->intersectionTester;
   }
 
+  void setRestitution(real restitution) {
+    this->restitution = restitution;
+  }
+
+  //TODO: remove scenery from collision detector properties. Maybe add collision layers and rules which layers collide with which?
   Geometry &addScenery(std::unique_ptr<Geometry> scenery) {
     if(scenery) {
       this->scenery.push_back(std::move(scenery));
@@ -62,7 +67,7 @@ public:
                   std::vector<GeometryContact> pairContacts = intersectionTester.detectCollision(particleA->getBoundingVolume(), *sceneryIterator);
                   if(!pairContacts.empty()) {
                     std::transform(pairContacts.begin(), pairContacts.end(), std::back_inserter(contacts),
-                            [&particleA](GeometryContact pairContact) -> ParticleContact {
+                            [this, &particleA](GeometryContact pairContact) -> ParticleContact {
                             if(pairContact.getGeometryA() == &particleA->getBoundingVolume()) {
                               return ParticleContact(particleA.get(),
                                     null,
@@ -92,7 +97,7 @@ public:
                   std::vector<GeometryContact> pairContacts = intersectionTester.detectCollision(particleA->getBoundingVolume(), particleB->getBoundingVolume());
                   if(!pairContacts.empty()) {
                     std::transform(pairContacts.begin(), pairContacts.end(), std::back_inserter(contacts),
-                            [&particleA, &particleB](GeometryContact pairContact) -> ParticleContact {
+                            [this, &particleA, &particleB](GeometryContact pairContact) -> ParticleContact {
                               if(pairContact.getGeometryA() == &particleA->getBoundingVolume()) {
                                 return ParticleContact(particleA.get(),
                                         particleB.get(),
@@ -128,7 +133,7 @@ public:
                 std::vector<GeometryContact> pairContacts = intersectionTester.detectCollision(particleA->getBoundingVolume(), *sceneryIterator);
                 if(!pairContacts.empty()) {
                   std::transform(pairContacts.begin(), pairContacts.end(), std::back_inserter(contacts),
-                          [&particleA](GeometryContact pairContact) -> ParticleContact {
+                          [this, &particleA](GeometryContact pairContact) -> ParticleContact {
                           return ParticleContact(particleA.get(),
                                   null,
                                   pairContact.getIntersection(),
