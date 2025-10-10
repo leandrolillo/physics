@@ -15,6 +15,7 @@ constexpr real sphere_radius=0.1;
 #include <Geometry.h>
 #include "CollisionTester.h"
 
+constexpr real restitution = 0.95;
 
 class CollisionDetector {
     std::vector <std::unique_ptr<Geometry>>scenery;
@@ -67,14 +68,14 @@ public:
                                     null,
                                     pairContact.getIntersection(),
                                     pairContact.getNormal(),
-                                    pairContact.getRestitution(),
+                                    restitution, //TODO: review how to get restitution
                                     pairContact.getPenetration());
                             } else {
                               return ParticleContact(null,
                                     particleA.get(),
                                     pairContact.getIntersection(),
                                     pairContact.getNormal(),
-                                    pairContact.getRestitution(),
+                                    restitution, //TODO: review how to get restitution
                                     pairContact.getPenetration());
                             }
                     });
@@ -97,14 +98,14 @@ public:
                                         particleB.get(),
                                         pairContact.getIntersection(),
                                         pairContact.getNormal(),
-                                        pairContact.getRestitution(),
+                                        restitution, //TODO: review how to get restitution
                                         pairContact.getPenetration());
                               } else {
                                 return ParticleContact(particleB.get(),
                                         particleA.get(),
                                         pairContact.getIntersection(),
                                         pairContact.getNormal(),
-                                        pairContact.getRestitution(),
+                                        restitution, //TODO: review how to get restitution
                                         pairContact.getPenetration());
                               }
                     });
@@ -132,7 +133,7 @@ public:
                                   null,
                                   pairContact.getIntersection(),
                                   pairContact.getNormal(),
-                                  pairContact.getRestitution(),
+                                  restitution, //TODO: review how to get restitution
                                   pairContact.getPenetration());
                   });
 
