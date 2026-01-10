@@ -47,14 +47,17 @@ public:
       throw std::invalid_argument(String(__FILE__) + ":" + std::to_string(__LINE__) + ": Particle can not be null");
     }
 
-    this->collisionDetector.addScenery(std::move(scenery));
+    return this->collisionDetector.addScenery(std::move(scenery));
+  }
 
-    return *this->collisionDetector.getScenery().back();
+  void removeScenery(Geometry &scenery) {
+    this->collisionDetector.removeScenery(scenery);
   }
 
   const std::vector<std::unique_ptr<Geometry>>& getScenery() const {
     return this->collisionDetector.getScenery();
   }
+
 
 //  void removeParticle(const Particle *particle) {
 //    //this->particles.erase(__position)

@@ -44,6 +44,11 @@ public:
     }
   }
 
+  void removeScenery(Geometry &scenery) {
+    this->scenery.erase(std::remove_if(this->scenery.begin(), this->scenery.end(), [&scenery](std::unique_ptr<Geometry> &sceneryPtr) { return sceneryPtr.get() == &scenery;}), this->scenery.end());
+    //this->scenery.erase(std::remove(this->scenery.begin(), this->scenery.end(), s))
+  }
+
   const std::vector<std::unique_ptr<Geometry>> &getScenery() const {
     return this->scenery;
   }
