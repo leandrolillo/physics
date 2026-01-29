@@ -15,10 +15,11 @@ constexpr real sphere_radius=0.1;
 #include <Geometry.h>
 #include "CollisionTester.h"
 
-
 class CollisionDetector {
     std::vector <std::unique_ptr<Geometry>>scenery;
     CollisionTester intersectionTester;
+
+    real restitution = 0.95;
 public:
   CollisionDetector() {
   }
@@ -29,6 +30,11 @@ public:
     return this->intersectionTester;
   }
 
+  void setRestitution(real restitution) {
+    this->restitution = restitution;
+  }
+
+  //TODO: remove scenery from collision detector properties. Maybe add collision layers and rules which layers collide with which?
   Geometry &addScenery(std::unique_ptr<Geometry> scenery) {
     if(scenery) {
       this->scenery.push_back(std::move(scenery));
@@ -36,6 +42,11 @@ public:
     } else {
       throw std::invalid_argument("Scenery can not be null");
     }
+  }
+
+  void removeScenery(Geometry &scenery) {
+    this->scenery.erase(std::remove_if(this->scenery.begin(), this->scenery.end(), [&scenery](std::unique_ptr<Geometry> &sceneryPtr) { return sceneryPtr.get() == &scenery;}), this->scenery.end());
+    //this->scenery.erase(std::remove(this->scenery.begin(), this->scenery.end(), s))
   }
 
   const std::vector<std::unique_ptr<Geometry>> &getScenery() const {
@@ -57,29 +68,30 @@ public:
             auto &particleA = *iteratorA;
             if(particleA && particleA->getStatus()) {
               for(auto &sceneryIterator : this->scenery)  {
-                if(sceneryIterator) {
+                if(sceneryIterator && sceneryIterator->getStatus()) {
                   std::vector<GeometryContact> pairContacts = intersectionTester.detectCollision(particleA->getBoundingVolume(), *sceneryIterator);
                   if(!pairContacts.empty()) {
                     std::transform(pairContacts.begin(), pairContacts.end(), std::back_inserter(contacts),
-                            [&particleA](GeometryContact pairContact) -> ParticleContact {
+                            [this, &particleA](GeometryContact pairContact) -> ParticleContact {
                             if(pairContact.getGeometryA() == &particleA->getBoundingVolume()) {
                               return ParticleContact(particleA.get(),
                                     null,
                                     pairContact.getIntersection(),
                                     pairContact.getNormal(),
-                                    pairContact.getRestitution(),
+                                    restitution, //TODO: review how to get restitution
                                     pairContact.getPenetration());
                             } else {
                               return ParticleContact(null,
                                     particleA.get(),
                                     pairContact.getIntersection(),
                                     pairContact.getNormal(),
-                                    pairContact.getRestitution(),
+                                    restitution, //TODO: review how to get restitution
                                     pairContact.getPenetration());
                             }
                     });
 
                     particleA->onCollision(contacts.back());
+                    sceneryIterator->onCollision((GeometryContact &)contacts.back());
                   }
                 }
               }
@@ -90,20 +102,20 @@ public:
                   std::vector<GeometryContact> pairContacts = intersectionTester.detectCollision(particleA->getBoundingVolume(), particleB->getBoundingVolume());
                   if(!pairContacts.empty()) {
                     std::transform(pairContacts.begin(), pairContacts.end(), std::back_inserter(contacts),
-                            [&particleA, &particleB](GeometryContact pairContact) -> ParticleContact {
+                            [this, &particleA, &particleB](GeometryContact pairContact) -> ParticleContact {
                               if(pairContact.getGeometryA() == &particleA->getBoundingVolume()) {
                                 return ParticleContact(particleA.get(),
                                         particleB.get(),
                                         pairContact.getIntersection(),
                                         pairContact.getNormal(),
-                                        pairContact.getRestitution(),
+                                        restitution, //TODO: review how to get restitution
                                         pairContact.getPenetration());
                               } else {
                                 return ParticleContact(particleB.get(),
                                         particleA.get(),
                                         pairContact.getIntersection(),
                                         pairContact.getNormal(),
-                                        pairContact.getRestitution(),
+                                        restitution, //TODO: review how to get restitution
                                         pairContact.getPenetration());
                               }
                     });
@@ -122,20 +134,21 @@ public:
           auto &particleA = particles.back();
           if(particleA && particleA->getStatus()) {
             for(auto &sceneryIterator : this->scenery)  {
-              if(sceneryIterator) {
+              if(sceneryIterator && sceneryIterator->getStatus()) {
                 std::vector<GeometryContact> pairContacts = intersectionTester.detectCollision(particleA->getBoundingVolume(), *sceneryIterator);
                 if(!pairContacts.empty()) {
                   std::transform(pairContacts.begin(), pairContacts.end(), std::back_inserter(contacts),
-                          [&particleA](GeometryContact pairContact) -> ParticleContact {
+                          [this, &particleA](GeometryContact pairContact) -> ParticleContact {
                           return ParticleContact(particleA.get(),
                                   null,
                                   pairContact.getIntersection(),
                                   pairContact.getNormal(),
-                                  pairContact.getRestitution(),
+                                  restitution, //TODO: review how to get restitution
                                   pairContact.getPenetration());
                   });
 
                   particleA->onCollision(contacts.back());
+                  sceneryIterator->onCollision((GeometryContact &)contacts.back());
                 }
               }
             }

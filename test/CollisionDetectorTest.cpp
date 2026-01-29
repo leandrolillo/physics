@@ -31,3 +31,13 @@ TEST_CASE("CollisionDetector Sphere Sphere collision") {
     REQUIRE(expectedNormal == contact.getNormal());
     REQUIRE(expectedPenetration == contact.getPenetration());
 }
+
+TEST_CASE("CollisionDetector addScenery removeScenery") {
+  CollisionDetector collisionDetector;
+
+  Sphere &sphere = (Sphere &)collisionDetector.addScenery(std::make_unique<Sphere>(vector(2, 1, 1), 2.0));
+  CHECK(collisionDetector.getScenery().size() == 1);
+
+  collisionDetector.removeScenery(sphere);
+  CHECK(collisionDetector.getScenery().size() == 0);
+}

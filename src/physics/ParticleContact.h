@@ -16,12 +16,14 @@ public:
   Particle *particleA;
   Particle *particleB;
   real relativeSpeed;
+  real restitution {0}; //how much energy to dissipate - 0 = all 1 = none. No energy dissipation could lead to numerical instability
 
 public:
   ParticleContact(Particle *particleA, Particle *particleB, const vector &intersection, const vector &normal, real restitution,
-      real penetration = 0.0) : BaseContact(intersection, normal, restitution, penetration) {
+      real penetration = 0.0) : BaseContact(intersection, normal, penetration) {
     this->particleA = particleA;
     this->particleB = particleB;
+    this->restitution = restitution;
 
     vector relativeVelocity = particleA->getVelocity();
     if (particleB != null) {
@@ -41,5 +43,9 @@ public:
 
   real getRelativeSpeed() const {
     return this->relativeSpeed;
+  }
+
+  real getRestitution() const {
+    return this->restitution;
   }
 };
