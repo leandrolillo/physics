@@ -82,8 +82,13 @@ TEST_CASE("ParticleManager step applies forces and integrates only active partic
   REQUIRE(inactiveParticlePtr->getVelocity() == vector(0, 0, 0));
   REQUIRE(inactiveParticlePtr->afterIntegrateCalls == 0);
 
-  activeParticlePtr->applyForce(vector(3, 2, 1));
-  REQUIRE(activeParticlePtr->getAccumulatedForce() == vector(3, 2, 1));
   particleManager.clearAccumulators();
-  REQUIRE(activeParticlePtr->getAccumulatedForce() == vector(0, 0, 0));
+  REQUIRE(activeParticlePtr->getAccumulatedForce().x == 0.0f);
+  REQUIRE(activeParticlePtr->getAccumulatedForce().y == 0.0f);
+  REQUIRE(activeParticlePtr->getAccumulatedForce().z == 0.0f);
+
+  activeParticlePtr->applyForce(vector(3, 2, 1));
+  REQUIRE(activeParticlePtr->getAccumulatedForce().x == 3.0f);
+  REQUIRE(activeParticlePtr->getAccumulatedForce().y == 2.0f);
+  REQUIRE(activeParticlePtr->getAccumulatedForce().z == 1.0f);
 }
